@@ -46,9 +46,11 @@ resource "google_compute_instance_template" "sfg" {
     disk_type    = var.boot_disk_type
     labels       = local.common_labels
 
-    # CIS 4.7: CMEK disk encryption
-    disk_encryption_key {
-      kms_key_self_link = var.kms_key
+    dynamic "disk_encryption_key" {
+      for_each = var.kms_key != null ? [var.kms_key] : []
+      content {
+        kms_key_self_link = disk_encryption_key.value
+      }
     }
   }
 
@@ -63,7 +65,7 @@ resource "google_compute_instance_template" "sfg" {
     block-project-ssh-keys = "TRUE"  # CIS 4.3: block project-wide SSH keys
     serial-port-enable     = "FALSE" # CIS 4.5: disable serial port access
 
-    startup-script = templatefile("${path.module}/startup_script.sh.tpl", {
+    startup-script = var.startup_script != null ? var.startup_script : templatefile("${path.module}/startup_script.sh.tpl", {
       gcs_bucket         = var.gcs_bucket
       gcs_installer_path = var.gcs_installer_path
       sfg_install_dir    = var.sfg_install_dir

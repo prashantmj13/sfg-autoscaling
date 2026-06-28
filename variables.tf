@@ -56,7 +56,8 @@ variable "boot_disk_type" {
 
 variable "kms_key" {
   type        = string
-  description = "Full self-link of the Cloud KMS CryptoKey version for boot disk encryption. CIS 4.7: CMEK required."
+  description = "Full self-link of the Cloud KMS CryptoKey version for boot disk encryption. Leave null to use Google-managed encryption."
+  default     = null
 }
 
 variable "min_replicas" {
@@ -85,12 +86,20 @@ variable "cooldown_period" {
 
 variable "gcs_bucket" {
   type        = string
-  description = "GCS bucket name containing the SFG installer and license files."
+  description = "GCS bucket name containing the SFG installer. Not required when startup_script is set."
+  default     = ""
 }
 
 variable "gcs_installer_path" {
   type        = string
-  description = "Object path within gcs_bucket for the SFG installer ZIP (e.g. sfg/sfg-installer-6.2.zip)."
+  description = "Object path within gcs_bucket for the SFG installer ZIP. Not required when startup_script is set."
+  default     = ""
+}
+
+variable "startup_script" {
+  type        = string
+  description = "Custom startup script content. When set, replaces the built-in SFG installer script entirely. Use this to inject application-specific startup logic from a calling module."
+  default     = null
 }
 
 variable "sfg_install_dir" {

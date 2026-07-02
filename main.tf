@@ -70,6 +70,8 @@ resource "google_compute_instance_template" "sfg" {
       gcs_installer_path = var.gcs_installer_path
       sfg_install_dir    = var.sfg_install_dir
       sfg_port           = var.sfg_port
+      user_name          = "admin"
+      user_pwd           = "P@ssw0rd1234"
     })
   }
 
